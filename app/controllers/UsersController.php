@@ -10,7 +10,7 @@ class UsersController extends \Takajou\Controller\Base
     public function indexAction()
     {
         $this->getService('dbManager')->slaveModeOn();
-        $usersObj = \Db\Factory::createInstance('\Db\Trun\Users');
+        $usersObj = \Db\Factory::getInstance('Trun\Users');
         $users = $usersObj->getUsers();
         return $users;
     }
@@ -19,10 +19,11 @@ class UsersController extends \Takajou\Controller\Base
     {
         $id = 1;
         $this->getService('dbManager')->MasterModeOn();
-        $this->getService('dbManager')->autoBeginOn();
-        $usersObj = new \Db\Trun\Users();
-        $usersObj->updateNameById($id, 'tramsaction55555');
-        return $usersObj->getUsersById(1);
+        $usersObj = \Db\Factory::getInstanceWithBegin('Trun\Users');
+        $usersObj->updateNameById($id, 'beginTest3');
+        $usersObj->commitTransaction();
+
+        return $usersObj->getUsersById($id);
     }
 /*`
     public function afterExecuteRoute() {
