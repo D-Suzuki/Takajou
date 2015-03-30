@@ -9,9 +9,10 @@ class UsersController extends \Takajou\Controller\Base
 
     public function indexAction()
     {
+        $primaryKey = 1;
         $this->getService('dbManager')->slaveModeOn();
-        $usersObj = \Db\Factory::getInstance('Trun\Users');
-        $users = $usersObj->getUsers();
+        $usersObj = \Db\Factory::getInstance('Trun\Users', $primaryKey);
+        $users = $usersObj->getRecords();
         return $users;
     }
 

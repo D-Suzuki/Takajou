@@ -3,6 +3,13 @@ namespace Db\Trun;
 
 class Users extends \Db\Trun {
 
+    public function onConstruct()
+    {
+        $this->setTableName('users');
+        $this->setPrimaryKey('id');
+        parent::onConstruct();
+    }
+
     public function getUsers() {
         $connection = $this->getConnection();
         return $connection->query('SELECT * FROM users')->fetchAll();

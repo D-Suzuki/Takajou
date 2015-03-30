@@ -5,7 +5,8 @@ class Base extends \Phalcon\Mvc\Model {
 
     private $connection = null;
     private $tableName  = null;
-    private $record     = null;
+    private $primaryKey = null;
+    private $records    = null;
 
     public function onConstruct()
     {
@@ -34,7 +35,7 @@ class Base extends \Phalcon\Mvc\Model {
         return $this->connection;
     }
 
-    private function setTableName($tableName)
+    public function setTableName($tableName)
     {
         $this->tableName = $tableName;
     }
@@ -42,6 +43,45 @@ class Base extends \Phalcon\Mvc\Model {
     public function getTableName()
     {
         return $this->tableName;
+    }
+
+    public function setPrimaryKey($primaryKey)
+    {
+        $this->primaryKey = $primaryKey;
+    }
+
+    public function getPrimaryKey() {
+        if ($this->primaryKey) {
+            return $this->primaryKey;
+        }
+        $tableName = $this->getTableName();
+        foreach ($this->getConnection()->describeColumns($tableName) as $clumnObj) {
+            if ($clumnObj->isPrimary()) {
+                $primaryKey = $clumnObj->getName();
+                break;
+            }
+        }
+        return $primaryKey;
+    }
+
+    public function setRecords($records)
+    {
+        $this->records = $records;
+    }
+
+    public function getRecords()
+    {
+        return $this->records;
+    }
+
+    public function setRecord($key, $value)
+    {
+        $this->records[$key] = $value;
+    }
+
+    public function getRecord($key)
+    {
+        return $this->records[$key];
     }
 
     public function beginTransaction($isNesting = false)
@@ -69,5 +109,16 @@ class Base extends \Phalcon\Mvc\Model {
 
     public function getSqlBuilder() {
         return $this->getDi()->getShared('sqlBuilder');
+    }
+
+    public function findByPrimaryKey($primary)
+    {
+        $sql = <<<EOF
+   SELECT *
+     FROM {$this->tableName}
+    WHERE {$this->getPrimaryKey()} = ?
+EOF;
+        $params = array($primary);
+        return $this->getConnection()->fetchOne($sql, \Phalcon\Db::FETCH_ASSOC, $params);
     }
 }
