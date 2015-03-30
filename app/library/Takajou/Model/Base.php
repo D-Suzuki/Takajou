@@ -34,6 +34,11 @@ class Base extends \Phalcon\Mvc\Model {
         $this->getConnection()->begin($isNesting);
     }
 
+    public function commitTransaction($isNesting = false)
+    {
+        $this->getConnection()->commit($isNesting);
+    }
+
     public function closeConnection()
     {
         $this->getConnection()->close();
