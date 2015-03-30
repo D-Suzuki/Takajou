@@ -1,0 +1,10 @@
+<?php
+namespace Db;
+
+class Trun extends \TakaJou\Model\Base {
+    public function onConstruct() {
+        $this->getDI()->get('dbManager')->setConnectDb('trun');
+        parent::onConstruct();
+    }
+
+}

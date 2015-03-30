@@ -1,0 +1,9 @@
+<?php
+namespace TakaJou\Model;
+
+class Factory {
+
+    public static function createInstance($class) {
+        return new $class();
+    }
+}

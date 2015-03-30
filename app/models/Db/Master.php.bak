@@ -1,0 +1,9 @@
+<?php
+namespace Db;
+
+class Master extends \TakaJou\Model\Base {
+    public function onConstruct() {
+        $this->getDI()->get('dbManager')->setConnectDb('master');
+        parent::onConstruct();
+    }
+}
