@@ -4,6 +4,8 @@ namespace Takajou\Model;
 class Base extends \Phalcon\Mvc\Model {
 
     private $connection = null;
+    private $tableName  = null;
+    private $record     = null;
 
     public function onConstruct()
     {
@@ -12,6 +14,9 @@ class Base extends \Phalcon\Mvc\Model {
         $this->setConnection($connection);
         // \Phalcon\Mvc\Modelの機能も使用可能にするようコネクションサービスを登録
         $this->setConnectionService($connection->getDiName());
+        if (!$this->getTableName()) {
+            $this->setTableName($this->getSource());
+        }
     }
 
     public function getDbManager()
@@ -27,6 +32,16 @@ class Base extends \Phalcon\Mvc\Model {
     public function getConnection()
     {
         return $this->connection;
+    }
+
+    private function setTableName($tableName)
+    {
+        $this->tableName = $tableName;
+    }
+
+    public function getTableName()
+    {
+        return $this->tableName;
     }
 
     public function beginTransaction($isNesting = false)
