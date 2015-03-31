@@ -24,4 +24,9 @@ class Users extends \Db\Trun {
         $params     = array($name, $id);
         $connection->execute($query, $params);
     }
+
+    public function sideci_test()
+    {
+
+    }
 }
