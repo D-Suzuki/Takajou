@@ -10,8 +10,6 @@ class Base extends \Phalcon\Mvc\Model {
         // 同一DBの接続は使いまわすためgetSharedで取得
         $connection = $this->getDbManager()->getSharedConnection();
         $this->setConnection($connection);
-        // \Phalcon\Mvc\Modelの機能も使用可能にするようコネクションサービスを登録
-        $this->setConnectionService($connection->getDiName());
     }
 
     public function getDbManager()

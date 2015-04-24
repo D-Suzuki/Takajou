@@ -4,7 +4,9 @@ namespace Db\Trun;
 class Users extends \Db\Trun {
 
     public function getUsers() {
-        $connection = $this->getConnection();
+        $this->setQuery('SELECT * FROM users');
+        var_dump($this->exec());
+
         return $connection->query('SELECT * FROM users')->fetchAll();
     }
 

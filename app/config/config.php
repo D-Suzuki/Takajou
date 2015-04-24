@@ -3,7 +3,6 @@ return array(
 ######
 # DB #
 ######
-
     'databases' => array(
         \Takajou\Def\Db\ClusterType::MASTER => array(
             'master' => array(
@@ -44,9 +43,9 @@ return array(
             'master' => array(
                 'diName'      => 'slave_master',
                 'adapter'     => 'Mysql',
-                'host'        => 'localhost',
-                'username'    => 'root',
-                'password'    => '',
+                'host'        => 'v_lvs',
+                'username'    => 'mori',
+                'password'    => 'r7KsDcoh',
                 'dbname'      => 'master',
                 'charset'     => 'utf8',
                 'isSqlLoging' => true,
@@ -55,9 +54,9 @@ return array(
             'trun' => array(
                 'diName'      => 'slave_trun',
                 'adapter'     => 'Mysql',
-                'host'        => 'localhost',
-                'username'    => 'root',
-                'password'    => '',
+                'host'        => 'v_lvs',
+                'username'    => 'mori',
+                'password'    => 'r7KsDcoh',
                 'dbname'      => 'trun',
                 'charset'     => 'utf8',
                 'isSqlLoging' => true,
@@ -66,9 +65,9 @@ return array(
             'history' => array(
                 'diName'      => 'slave_history',
                 'adapter'     => 'Mysql',
-                'host'        => 'localhost',
-                'username'    => 'root',
-                'password'    => '',
+                'host'        => 'v_lvs',
+                'username'    => 'mori',
+                'password'    => 'r7KsDcoh',
                 'dbname'      => 'history',
                 'charset'     => 'utf8',
                 'isSqlLoging' => true,

@@ -1,181 +1,196 @@
 <?php
 namespace Takajou\Db;
 
-class Manager {
+/**
+ * DBの状態管理クラス
+ * @author suzuki
+ */
+class Manager implements ManagerInterface {
 
-    private $di                  = null;
-    private $config              = null;
-    private $clusterMode         = \Takajou\Def\Db\ClusterType::NONE;
-    private $connectDb           = 'db';
-    private $isAutoBegin         = false;
-    private $startedTransactions = array();
+##############
+# プロパティ #
+##############
+    /**
+     * データベースの設定値オブジェクト
+     * @var \Phalcon\Config
+     */
+    private $dbConfigs = null;
 
-    public function __construct(\Phalcon\DiInterface $di, \Phalcon\Config $config)
-    {
-        if (!$di) {
+
+    /**
+     * クラスタモード
+     * [ NONE/MASTER/SLAVE ]
+     * @var string
+     */
+    private $clusterMode = \Takajou\Def\Db\ClusterType::NONE;
+
+
+    /**
+     * コネクションプール
+     * @var array[$connectionId] = \Phalcon\Db\Adapter $connection
+     */
+    private $connectionPool = array();
+
+
+    /**
+     * トランザクションスタートしたコネクションのID配列
+     * @var array($connectionId1, $connectionId2, ...)
+     */
+    private $beginedConnectionIds = array();
+
+
+    /* -------------------------------------------------- */
+
+
+    /**
+     * コンストラクタ
+     * DBに関する設定値を引数とする
+     * @param \Phalcon\Config $dbConfigs
+     */
+    public function __construct(\Phalcon\Config $dbConfigs) {
+        if (!$dbConfigs) {
 //TODO:
         }
-        $this->setDI($di);
-        if (!$config) {
-//TODO:
-        }
-        $this->setConfig($config);
+        $this->dbConfigs = $dbConfigs;
     }
 
-    private function setDI(\Phalcon\DiInterface $di)
-    {
-        $this->di = $di;
+############
+# アクセサ #
+############
+    /**
+     * configプロパティへのアクセサメソッド
+     * configプロパティはイミュータブルのためgetterのみ
+     * @param \Phalcon\Config $dbConfig
+     */
+    private function getDbConfigs() {
+        return $this->dbConfigs;
     }
 
-    private function getDI()
-    {
-        return $this->di;
+
+    /**
+     * clusterModeへのアクセサメソッド
+     * 外部からは
+     * ・clusterModeOff
+     * ・masterModeOn
+     * ・slaveModeOn
+     * でclusterModeの状態を変更するためsetterはprivate
+     * @param string $clusterMode
+     */
+    private function setClusterMode($clusterMode) {
+        $this->clusterMode = $clusterMode;
+    }
+    public function getClusterMode() {
+        return $this->clusterMode;
     }
 
-    private function setConfig($config)
-    {
-        $this->config = $config;
+
+    /**
+     * コネクションプールへのsetter
+     * @param unknown $connectionId
+     * @param unknown $connection
+     */
+    public function setConnection($connectionId, $connection) {
+        $this->connectionPool[$connectionId] = $connection;
     }
 
-    private function getConfig()
-    {
-        return $this->config;
+
+    /**
+     * コネクションプールへのgetter
+     * @param  unknown $connectionId
+     * @return \Phalcon\Db\Adapter
+     */
+    public function getConnection($connectionId) {
+        return $this->connectionPool[$connectionId];
     }
 
-    public function getDbSettings()
-    {
-        $config     = $this->getConfig();
-        $dbSettings = $config['databases'][$this->getClusterMode()][$this->getConnectDb()];
-        if(!$dbSettings) {
+
+    /**
+     * コネクションプールへのgetter
+     * @return array[\Phalcon\Db\Adapter]
+     */
+    public function getConnectionPool() {
+    	return $this->connectionPool;
+    }
+
+
+    /**
+     * トランザクションスタートしているコネクションIDの配列を返却
+     */
+    public function getBeginedConnectionIds() {
+        return $this->beginedConnectionIds;
+    }
+
+
+################
+# dbConfig取得 #
+################
+    public function getDbConfig($dbName) {
+        $dbConfigs  = $this->getDbConfigs();
+        $dbConfig   = $dbConfigs[$this->getClusterMode()][$dbName];
+        if (!$dbConfig) {
             return false;
-        } 
-        return $dbSettings;
+        }
+        return $dbConfig;
     }
 
+
+######################
+# クラスタモード変更 #
+######################
+    /**
+     * クラスタモードを「NONE」へ変更
+     */
     public function clusterModeOff() {
         $this->setClusterMode(\Takajou\Def\Db\ClusterType::NONE);
     }
 
+
+    /**
+     * クラスタモードを「MASTER」へ変更
+     */
     public function masterModeOn() {
         $this->setClusterMode(\Takajou\Def\Db\ClusterType::MASTER);
     }
 
+
+    /**
+     * クラスタモードを「SLAVE」へ変更
+     */
     public function slaveModeOn() {
         $this->setClusterMode(\Takajou\Def\Db\ClusterType::SLAVE);
     }
 
-    private function setClusterMode($clusterMode)
-    {
-        $this->clusterMode = $clusterMode;
-    }
 
-    public function getClusterMode()
-    {
-        return $this->clusterMode;
-    }
-
-    public function setConnectDb($connectDb)
-    {
-        $this->connectDb = $connectDb;
-    }
-
-    public function getConnectDb()
-    {
-        return $this->connectDb;
-    }
-
-    public function autoBeginOn()
-    {
-        $this->setIsAutoBegin(true);
-    }
-
-    public function autoBeginOff()
-    {
-        $this->setIsAutoBegin(false);
-    }
-
-    private function setIsAutoBegin($isAutoBegin)
-    {
-        $this->isAutoBegin = $isAutoBegin;
-    }
-
-    private function isAutoBegin()
-    {
-        return $this->isAutoBegin;
-    }
-
-    public function getSharedConnection($isBegin = false)
-    {
-        $dbSettings = $this->getDbSettings();
-        if (!$dbSettings) {
-//TODO:throw exception
-        }
-        $connection = $this->getDI()->getShared($dbSettings->diName);
-        if ($isBegin || $this->isAutoBegin()) {
-            $connection->begin();
-        }
-        return $connection;
-    }
-
-    public function getNewConnection($isBegin = false)
-    {
-        $dbSettings = $this->getDbSettings();
-        if (!$dbSettings) {
-//TODO:throw exception
-        }
-        $connection = $this->getDI()->get($dbSettings->diName);
-        if ($isBegin || $this->isAutoBegin()) {
-            $connection->begin();
-        }
-        return $connection;
-    }
-
-    public function addStartedTransaction($connectionId, $connectionObj)
-    {
-        $this->startedTransactions[$connectionId] = $connectionObj;
-    }
-
-    public function hasStartedTransactions()
-    {
-        return $this->getStartedTransactions() ? true : false;
-    }
-
-    public function getStartedTransactions()
-    {
-        return $this->startedTransactions;
-    }
-
-    public function getStartTedransaction($connectionId)
-    {
-        return $this->startedTransactions[$connectionId];
-    }
-
-    public function allCommit()
-    {
-        if ($this->hasStartedTransactions()) {
-            foreach ($this->getStartedTransactions() as $connection) {
-                do {
-                    $isNesting = $connection->getTransactionLevel() > 1 ? true : false;
-                    $connection->commit($isNesting);
-                } while ($connection->getTransactionLevel() != 0);
-            }
+##########################
+# コネクション状態の変更 #
+##########################
+    /**
+     * トランザクションスタート
+     * @param int $connectionId
+     */
+    public function addBeginedTransaction($connectionId) {
+        if (!in_array($connectionId, $this->beginedConnectionIds)) {
+            $this->beginedConnectionIds[] = $connectionId;
         }
     }
 
-    public function allRollback()
-    {
-        if ($this->hasStartedTransactions()) {
-            foreach ($this->getStartedTransactions() as $connection) {
-                do {
-                    $isNesting = $connection->getTransactionLevel() > 1 ? true : false;
-                    $connection->rollback($isNesting);
-                } while ($connection->getTransactionLevel() != 0);
-            }
+
+    /**
+     * トランザクションエンド
+     * @param int $connectionId
+     */
+    public function deleteBeginedTransaction($connectionId) {
+        if (($key = array_search($connectionId, $this->beginedConnectionIds)) !== false) {
+            unset($this->beginedConnectionIds[$key]);
         }
     }
 
-    public function destroyTransaction($connectionId)
-    {
-        unset($this->startedTransactions[$connectionId]);
+
+    /**
+     * トランザクションスタートしているコネクションがあるかの判定
+     * @return boolean
+     */
+    public function hasBeginedTransaction() {
+        return $this->beginedConnectionIds ? true : false;
     }
 }

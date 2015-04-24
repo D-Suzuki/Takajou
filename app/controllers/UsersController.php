@@ -10,8 +10,19 @@ class UsersController extends \Takajou\Controller\Base
     public function indexAction()
     {
         $this->getService('dbManager')->slaveModeOn();
+        $this->getService('dbAccess')->createSharedConnection('trun', $isBegin = true);
+        
+        
+        $this->getService('dbAccess')->closeConnection(1);
+        //$this->getService('dbAccess')->reConnect(1);
+        
+        echo '<pre>';
+        var_dump($this->getService('dbManager')->getConnectionPool());exit;
+        var_dump($this->getService('dbManager')->getBeginedConnectionIds());exit;
+        
         $usersObj = \Db\Factory::createInstance('\Db\Trun\Users');
         $users = $usersObj->getUsers();
+
         return $users;
     }
 
@@ -29,4 +40,4 @@ class UsersController extends \Takajou\Controller\Base
 
     }
 */
-}    
+}

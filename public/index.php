@@ -7,8 +7,8 @@ try {
     /**
      * Read auto-loader
      */
-    $loader = new \Phalcon\Loader();
-    $loader->registerDirs(array(
+    $loaderObj = new \Phalcon\Loader();
+    $loaderObj->registerDirs(array(
         '../app/controllers/',
         '../app/config/',
         '../app/models/',
@@ -24,26 +24,26 @@ try {
     /**
      * Read services
      */
-    $service = new \Takajou\Bootstrap\Service();
-    $service->setDefaultDI($configObj);
-    $di = $service->getDI();
+    $serviceObj = new \Takajou\Bootstrap\Service();
+    $serviceObj->setDefaultDI($configObj);
+    $di = $serviceObj->getDI();
 
     /**
      * Handle the request
      */
-    $application = new \Phalcon\Mvc\Application($di);
-    $responce = $application->handle()->getContent();
-
-    if ($di->get('dbManager')->hasStartedTransactions()) {
-        $di->get('dbManager')->allCommit();
+    $applicationObj = new \Phalcon\Mvc\Application($di);
+    $responce = $applicationObj->handle()->getContent();
+    
+    if ($di->get('dbManager')->hasBeginedTransaction()) {
+        $di->get('dbAccess')->allCommit();
     }
 
     echo $responce;
 
 } catch (\Exception $e) {
 
-    if ($di->get('dbManager')->hasStartedTransactions()) {
-        $di->get('dbManager')->allRollback();
+    if ($di->get('dbManager')->hasBeginedTransaction()) {
+        $di->get('dbAccess')->allRollback();
     }
     echo $e->getMessage();
 }

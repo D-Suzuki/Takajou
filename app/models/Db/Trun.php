@@ -1,10 +1,9 @@
 <?php
 namespace Db;
 
-class Trun extends \Takajou\Model\Base {
-    public function onConstruct() {
-        $this->getDI()->get('dbManager')->setConnectDb('trun');
-        parent::onConstruct();
-    }
+class Trun extends \Takajou\Db\Base {
 
+    public function getConnectDbName() {
+        return 'trun';
+    }
 }

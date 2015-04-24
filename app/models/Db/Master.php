@@ -1,9 +1,9 @@
 <?php
 namespace Db;
 
-class Master extends \Takajou\Model\Base {
-    public function onConstruct() {
-        $this->getDI()->get('dbManager')->setConnectDb('master');
-        parent::onConstruct();
+class Master extends \Takajou\Db\Base {
+
+    public function getConnectDbName() {
+        return 'master';
     }
 }

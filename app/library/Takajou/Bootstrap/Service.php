@@ -8,15 +8,16 @@ class Service {
     /**
      * DIコンテナのデフォルト設定
      */
-    public function setDefaultDI(\Phalcon\Config $config) {
+    public function setDefaultDI(\Phalcon\Config $configObj) {
 
-        // URL
         $di = new \Phalcon\DI\FactoryDefault();
-        $di->set('url', function () use ($config) {
-            $url = new UrlResolver();
-            $url->setBaseUri($config->services->url->baseUrl);
+        
+        // URL
+        $di->set('url', function () use ($configObj) {
+            $urlObj = new UrlResolver();
+            $urlObj->setBaseUri($configObj->services->url->baseUrl);
 
-            return $url;
+            return $urlObj;
         }, true);
 
         // View
@@ -25,41 +26,43 @@ class Service {
             return $view;
         });
 
+##########
+# DB関連 #
+##########
         // DB Manager
-        $di->setShared('dbManager', function() use($di, $config) {
-            $manager = new \Takajou\Db\Manager($di, $config);
-            return $manager;
+        $di->setShared('dbManager', function() use($configObj) {
+            $dbManagerObj = new \Takajou\Db\Manager($configObj->databases);
+            return $dbManagerObj;
         });
 
+        // DB Access
+        $di->setShared('dbAccess', function() use($di) {
+            $dbManagerObj = $di->getShared('dbManager');
+            $dbAccessObj  = new \Takajou\Db\Access($dbManagerObj);
+            return $dbAccessObj;
+        });
 
-        // DB
-        foreach($config->databases as $clusterType => $databases) {
-            foreach($databases as $dbName => $dbSettings) {
-                $di->set($dbSettings->diName, function () use($di, $dbSettings) {
+        // DB Connection
+        foreach($configObj->databases as $clusterMode => $databases) {
+            foreach($databases as $dbName => $dbConfigObj) {
+                $di->set($dbConfigObj->diName, function () use($di, $dbConfigObj) {
                     // DB接続
-                    $connection = new \Takajou\Db\Pdo($dbSettings, $di);
+                    $connectionObj = new \Takajou\Db\Adapter\Pdo\Mysql($dbConfigObj);
 
-                    // PDO処理イベントマネージャの登録
-                    if ($dbSettings->isSqlLoging) {
-                        $eventsManager = new \Phalcon\Events\Manager();
-                        $logger        = new \Phalcon\Logger\Adapter\File($dbSettings->logFile);
-                        $eventsManager->attach('db', function($event, $connection) use ($logger) {
-                            // SQLクエリログ
-                            if ($event->getType() == 'beforeQuery') {
-                                 // SQL
-                                 $logger->log($connection->getRealSQLStatement(), \Phalcon\Logger::INFO);
-                                 // プレースホルダーパラメーター
-                                 if ($connection->getSQLVariables()) {
-                                     foreach ($connection->getSQLVariables() as $key => $val) {
-                                         $logger->log(sprintf(' value [%s] = %s', $key, $val), \Phalcon\Logger::INFO);
-                                     }
-                                 }
-                            }
-                        });
-                        $connection->setEventsManager($eventsManager);
-                    }
+                    // DBリスナーを生成
+                    $dbManagerObj  = $di->getShared('dbManager');
+                    $loggerObj     = new \Phalcon\Logger\Adapter\File($dbConfigObj->logFile);
+                    $dbListenerObj = new \Takajou\Db\Listener($dbManagerObj, $dbConfigObj, $loggerObj);
 
-                    return $connection;
+                    // DBのイベントマネージャを登録
+                    $eventsManager = new \Phalcon\Events\Manager();
+                    $eventsManager->attach('db', $dbListenerObj);
+                    $connectionObj->setEventsManager($eventsManager);
+
+                    // 初期DB接続時イベント発火
+                    $eventsManager->fire('db:afterConnect', $connectionObj);
+
+                    return $connectionObj;
                 });
             }
         }
@@ -68,9 +71,9 @@ class Service {
             return new \Takajou\SqlBuilder\FluentPDO();
         });
 
-        $di->set('config', function () use ($config) {
-            return $config;
-        });
+        /** $di->set('config', function () use ($configObj) {
+            return $configObj;
+        }); */
 
         $this->_di = $di;
     }
