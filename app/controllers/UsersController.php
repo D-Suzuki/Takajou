@@ -9,9 +9,8 @@ class UsersController extends \Takajou\Controller\Base
 
     public function indexAction()
     {
-        $this->getService('dbManager')->slaveModeOn();
-        $this->getService('dbAccess')->createSharedConnection('trun', $isBegin = true);
-        
+        $this->getService('dbAccess')->createSharedConnection('gsdb_trun', $isBegin = true);
+        var_dump($this->getService('dbManager')->getConnectionPool());
         
         $this->getService('dbAccess')->closeConnection(1);
         //$this->getService('dbAccess')->reConnect(1);
