@@ -1,37 +1,27 @@
 <?php
 namespace Takajou\Db\Adapter\Pdo;
 
+/**
+ * コネクションクラス
+ * Phalcon DocumentにはafterConnect/beforeDisconnectイベントが用意されていると書かれているが
+ * 実際には実装されていなそうなので\Phalcon\Db\Adapter\Pdo\Mysqlクラスを継承して実現
+ * @author suzuki
+ */
 class Mysql extends \Phalcon\Db\Adapter\Pdo\Mysql {
 
-    /**
-     * コンストラクタ
-     * @param \Phalcon\Config $dbConfig
-     */
-    public function __construct(\Phalcon\Config $dbConfig) {
-        if (!$dbConfig) {
-//TODO:throw exception
-        }
-        $descriptor = array(
-            'host'     => $dbConfig->host,
-            'username' => $dbConfig->username,
-            'password' => $dbConfig->password,
-            'dbname'   => $dbConfig->dbname,
-            "charset"  => $dbConfig->charset,
-        );
-        parent::__construct($descriptor);
-    }
-    
     /**
      * 接続
      * @param unknown $descriptor
      * イベント発火のためconnectメソッドをインターセプト
      */
     public function connect($descriptor = null) {
+        
         if ($descriptor == null) {
             $descriptor = $this->getDescriptor();
         }
         parent::connect($descriptor);
-        // イベント発火
+        
+        // afterConnectイベント発火
         if ($this->getEventsManager()) {
             $this->getEventsManager()->fire("db:afterConnect", $this);
         }
@@ -42,7 +32,8 @@ class Mysql extends \Phalcon\Db\Adapter\Pdo\Mysql {
      * イベント発火のためcloseメソッドをインターセプト
      */
     public function close() {
-        // イベント発火
+        
+        // beforeDisconnectイベント発火
         if ($this->getEventsManager()) {
             $this->getEventsManager()->fire("db:beforeDisconnect", $this);
         }

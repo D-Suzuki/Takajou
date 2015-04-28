@@ -1,7 +1,7 @@
 <?php
 namespace Takajou\Def\Db;
 
-class ClusterType {
+class ClusterMode {
     const NONE   = 'none';
     const MASTER = 'master';
     const SLAVE  = 'slave';

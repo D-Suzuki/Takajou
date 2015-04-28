@@ -22,7 +22,7 @@ class Manager implements ManagerInterface {
      * [ NONE/MASTER/SLAVE ]
      * @var string
      */
-    private $clusterMode = \Takajou\Def\Db\ClusterType::NONE;
+    private $clusterMode = \Takajou\Def\Db\ClusterMode::NONE;
 
 
     /**
@@ -141,7 +141,7 @@ class Manager implements ManagerInterface {
      * クラスタモードを「NONE」へ変更
      */
     public function clusterModeOff() {
-        $this->setClusterMode(\Takajou\Def\Db\ClusterType::NONE);
+        $this->setClusterMode(\Takajou\Def\Db\ClusterMode::NONE);
     }
 
 
@@ -149,7 +149,7 @@ class Manager implements ManagerInterface {
      * クラスタモードを「MASTER」へ変更
      */
     public function masterModeOn() {
-        $this->setClusterMode(\Takajou\Def\Db\ClusterType::MASTER);
+        $this->setClusterMode(\Takajou\Def\Db\ClusterMode::MASTER);
     }
 
 
@@ -157,7 +157,7 @@ class Manager implements ManagerInterface {
      * クラスタモードを「SLAVE」へ変更
      */
     public function slaveModeOn() {
-        $this->setClusterMode(\Takajou\Def\Db\ClusterType::SLAVE);
+        $this->setClusterMode(\Takajou\Def\Db\ClusterMode::SLAVE);
     }
 
 

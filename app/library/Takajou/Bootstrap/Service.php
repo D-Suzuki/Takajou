@@ -46,21 +46,29 @@ class Service {
         foreach($configObj->databases as $clusterMode => $databases) {
             foreach($databases as $dbName => $dbConfigObj) {
                 $di->set($dbConfigObj->diName, function () use($di, $dbConfigObj) {
+                    // 接続情報
+                    $descriptor = array(
+                        'host'     => $dbConfigObj->host,
+                        'username' => $dbConfigObj->username,
+                        'password' => $dbConfigObj->password,
+                        'dbname'   => $dbConfigObj->dbname,
+                        "charset"  => $dbConfigObj->charset,
+                    );
                     // DB接続
-                    $connectionObj = new \Takajou\Db\Adapter\Pdo\Mysql($dbConfigObj);
+                    $connectionObj = new \Takajou\Db\Adapter\Pdo\Mysql($descriptor);
 
                     // DBリスナーを生成
                     $dbManagerObj  = $di->getShared('dbManager');
                     $loggerObj     = new \Phalcon\Logger\Adapter\File($dbConfigObj->logFile);
                     $dbListenerObj = new \Takajou\Db\Listener($dbManagerObj, $dbConfigObj, $loggerObj);
 
-                    // DBのイベントマネージャを登録
+                    // DBコネクションのイベントマネージャを登録
                     $eventsManager = new \Phalcon\Events\Manager();
                     $eventsManager->attach('db', $dbListenerObj);
                     $connectionObj->setEventsManager($eventsManager);
 
                     // 初期DB接続時イベント発火
-                    $eventsManager->fire('db:afterConnect', $connectionObj);
+                    $connectionObj->getEventsManager()->fire('db:afterConnect', $connectionObj);
 
                     return $connectionObj;
                 });
