@@ -6,14 +6,17 @@ class Base extends \Phalcon\Mvc\Controller {
 ########
 # 定数 #
 ########
+    // レスポンスタイプ
     const RESPONSE_TYPE_JSON  = 1;
     const RESPONSE_TYPE_JSONP = 2;
     const RESPONSE_TYPE_DATA  = 3;
 
+    // デフォルトコンテンツタイプ
     const DEFAULT_JSON_CONTENT_TYPE  = 'Content-type: application/json; charset=UTF-8';
     const DEFAULT_JSONP_CONTENT_TYPE = 'Content-type: application/javascript; charset=UTF-8';
     const DEFALUT_DATA_CONTENT_TYPE  = 'Content-type: image/*';
 
+    // デフォルト文字コード
     const DEFAULT_CHARSET = 'UTF-8';
 
 ##############
@@ -24,7 +27,7 @@ class Base extends \Phalcon\Mvc\Controller {
      * @var unknown
      */
     private $responseType = self::RESPONSE_TYPE_JSON;
-    private $callback = NULL;
+    private $callback     = NULL;
     
     public function initialize() {
 
@@ -61,7 +64,7 @@ class Base extends \Phalcon\Mvc\Controller {
      * @var string
      */
     protected function setCallback( $callback ) {
-        $this -> callback = $callback;
+        $this->callback = $callback;
     }
 
 ##########################

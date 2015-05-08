@@ -8,7 +8,7 @@ try {
      * デフォルトDIコンテナ
      */
     $di = new \Phalcon\DI\FactoryDefault();
-
+    
     /**
      * ルーティング登録
      */
@@ -36,7 +36,7 @@ try {
     /**
      * トランザクションコミット
      */
-    if ($di->get('dbManager')->hasBeginedTransaction()) {
+    if ($di->has('dbManager') && $di->get('dbManager')->hasBeginedTransaction()) {
         $di->get('dbAccess')->allCommit();
     }
 
@@ -47,7 +47,7 @@ try {
     /**
      * トランザクションロールバック
      */
-    if ($di->get('dbManager')->hasBeginedTransaction()) {
+    if ($di->has('dbManager') && $di->get('dbManager')->hasBeginedTransaction()) {
         $di->get('dbAccess')->allRollback();
     }
     echo $e->getMessage();

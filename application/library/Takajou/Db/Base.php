@@ -1,13 +1,20 @@
 <?php
 namespace Takajou\Db;
 
-abstract class Base extends \Phalcon\Di\Injectable {
+abstract class Base {
 
     /**
      * コネクションID
      * @var int
      */
     private $connectionId = null;
+
+
+    /**
+     * \Takajou\Db\Accessインスタンス
+     * @var \Takajou\Db\AccessInterface
+     */
+    private $dbAccessObj  = null;
 
 
     /**
@@ -27,9 +34,10 @@ abstract class Base extends \Phalcon\Di\Injectable {
     /* -------------------------------------------------- */
 
 
-    public function __construct() {
+    final public function __construct(\Takajou\Db\AccessInterface $dbAccessObj) {
+        $this->dbAccessObj = $dbAccessObj;
         // 同一DBの接続は使いまわすためgetSharedで取得
-        $this->connectionId = $this->getDbAccessObj()->createSharedConnection($this->getConnectDbName());
+        $this->connectionId = $dbAccessObj->createSharedConnection($this->getConnectDbName());
     }
 
 
@@ -42,25 +50,78 @@ abstract class Base extends \Phalcon\Di\Injectable {
 # アクセサ #
 ############
     /**
-     * クエリへのアクセサ
+     *queryへのsetter
      * @param string $query
      */
     public function setQuery($query) {
         $this->query = $query;
     }
-    
+
+
+    /**
+     * queryへのgetter
+     * @return string
+     */
     public function getQuery() {
         return $this->query;
     }
 
 
     /**
-     * クエリの実行
+     * bindParamsへのsetter
+     * @param array $bindParams
+     */
+    public function setBindParams($bindParams) {
+        $this->bindParams = $bindParams;
+    }
+
+
+    /**
+     * bindParamsへのgetter
+     * @return array
+     */
+    public function getBindParams() {
+        return $this->bindParams;
+    }
+
+
+################
+# 実行メソッド #
+################
+    /**
+     * クエリの実行(SELECT)
+     * @return array
+     */
+    public function select() {
+        return $this->getDbAccessObj()->select($this->connectionId, $this->query, $this->bindParams);
+    }
+
+
+    /**
+     * PDOステートメント取得
+     * @return PDOStatement
+     */
+    public function getPdoStatement() {
+        return $this->getDbAccessObj()->getPdoStatement($this->connectionId, $this->query, $this->bindParams);
+    }
+
+
+    /**
+     * クエリの実行(INSERT / UPDATE / DELETE)
+     * @return
      */
     public function exec() {
         return $this->getDbAccessObj()->exec($this->connectionId, $this->query, $this->bindParams);
     }
 
+
+    /**
+     * ラストインサートID取得
+     * @return
+     */
+    public function getLastInsertId() {
+        return $this->getDbAccessObj()->getLastInsertId($this->connectionId);
+    }
 
 ####################
 # コネクション操作 #
@@ -93,12 +154,12 @@ abstract class Base extends \Phalcon\Di\Injectable {
     }
 
 
-    public function getSqlBuilder() {
+    /* public function getSqlBuilder() {
         return $this->getDi()->getShared('sqlBuilder');
-    }
+    } */
 
 
     private function getDbAccessObj() {
-        return $this->di->getShared('dbAccess');
+        return $this->dbAccessObj;
     }
 }

@@ -28,7 +28,9 @@ class Service {
         if ($configObj->view) {
             $di->set('view', function() {
                 $view = new \Phalcon\Mvc\View();
-                $view->setViewsDir($configObj->view->viewsDir);
+                if (isset($configObj->view->viewsDir)) {
+                    $view->setViewsDir($configObj->view->viewsDir);
+                }
                 return $view;
             });
         }
@@ -56,7 +58,7 @@ class Service {
         // DB Access
         $di->setShared('dbAccess', function() use($di) {
             $dbManagerObj = $di->getShared('dbManager');
-            $dbAccessObj  = new \Takajou\Db\Access($dbManagerObj);
+            $dbAccessObj  = new \Takajou\Db\Access($di, $dbManagerObj);
             return $dbAccessObj;
         });
 
@@ -70,7 +72,7 @@ class Service {
                         'username' => $dbConfigObj->username,
                         'password' => $dbConfigObj->password,
                         'dbname'   => $dbConfigObj->dbName,
-                        "charset"  => $dbConfigObj->charset,
+                        'charset'  => $dbConfigObj->charset,
                     );
                     
                     // DB接続

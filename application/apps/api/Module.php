@@ -32,6 +32,5 @@ class Module implements \Phalcon\Mvc\ModuleDefinitionInterface
         // DIコンテナ登録
         $serviceObj = new \Takajou\Bootstrap\Service();
         $serviceObj->setDefaultDI($di, $configObj);
-
     }
 }

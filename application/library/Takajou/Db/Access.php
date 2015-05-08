@@ -2,10 +2,10 @@
 namespace Takajou\Db;
 
 /**
- * DBの状態管理クラス
+ * DBへのアクセスクラス
  * @author suzuki
  */
-class Access extends \Phalcon\Di\Injectable {
+class Access implements \Takajou\Db\AccessInterface {
 
     /**
      * DBマネージャーオブジェクト
@@ -29,8 +29,9 @@ class Access extends \Phalcon\Di\Injectable {
      * DBに関する設定値を引数とする
      * @param \Phalcon\Config $dbConfigs
      */
-    public function __construct(\Takajou\Db\ManagerInterface $dbManager) {
-        $this->dbManagerObj = $dbManager;
+    public function __construct(\Phalcon\DiInterface $di, \Takajou\Db\ManagerInterface $dbManagerObj) {
+        $this->di           = $di;
+        $this->dbManagerObj = $dbManagerObj;
     }
 
 
@@ -70,7 +71,7 @@ class Access extends \Phalcon\Di\Injectable {
         if (!$dbConfig) {
 //TODO:throw exception
         }
-        $connection = $this->getDI()->get($dbConfig->diName);
+        $connection = $this->di->get($dbConfig->diName);
 
         // トランザクションスタート
         if ($isBegin) {
@@ -137,13 +138,88 @@ class Access extends \Phalcon\Di\Injectable {
 ################
 # 実行メソッド #
 ################
-    public function exec($connectionId, $query, $bindParams) {
+    /**
+     * SELECT系クエリ
+     * @param  unknown $connectionId
+     * @param  unknown $query
+     * @param  unknown $bindParams
+     * @return array   
+     */
+    public function select($connectionId, $query, $bindParams) {
+
         $connection = $this->dbManagerObj->getConnection($connectionId);
-        return $connection->query($query)->fetchAll();
+        $result = $connection->query($query, $bindParams);
+        $result->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
+
+        return $result->fetchAll();
     }
 
+
+    /**
+     * SELECT系クエリ
+     * @param  unknown $connectionId
+     * @param  unknown $query
+     * @param  unknown $bindParams
+     * @return array
+     */
+    public function selectRow($connectionId, $query, $bindParams) {
+    
+        $connection = $this->dbManagerObj->getConnection($connectionId);
+        $result = $connection->query($query, $bindParams);
+        $result->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
+    
+        return $result->fetch();
+    }
+
+
+    /**
+     * PDOステートメントの返却
+     * @param unknown $connectionId
+     * @param unknown $query
+     * @param unknown $bindParams
+     * @return PDOStatement
+     */
+    public function getPdoStatement($connectionId, $query, $bindParams) {
+
+        $connection = $this->dbManagerObj->getConnection($connectionId);
+        $statement  = $connection->prepare($query);
+        if ($bindParams) {
+            $statement = $connection->executePrepared($statement, $bindParams);
+        }
+
+        return $statement;
+    }
+
+
+    /**
+     * 実行メソッド
+     * @param unknown $connectionId
+     * @param unknown $query
+     * @param unknown $bindParams
+     * @param boolean
+     */
+    public function exec($connectionId, $query, $bindParams) {
+
+        $connection = $this->dbManagerObj->getConnection($connectionId);
+        return $connection->execute($query);
+    }
+
+
+    /**
+     * ラストインサートID取得処理
+     * @return int
+     */
+    public function getLastInsertId($connectionId) {
+
+        $connection  = $this->dbManagerObj->getConnection($connectionId);
+        $lastInserId = $connection->lastInsertId();
+
+        return $lastInserId;
+    }
+
+
 ##############
-# 一括操作系 #
+# 一括実行系 #
 ##############
     /**
      * 全コミット
