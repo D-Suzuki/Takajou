@@ -4,7 +4,7 @@ return array(
 # DB #
 ######
     'db' => array(
-        \Takajou\Def\Db\ClusterMode::NONE => array(
+        \Takajou\Db\Manager::CLUSTER_MODE_MASTER => array(
             'gsdb_trun' => array(
                 'diName'      => 'gsdb_trun',
                 'adapter'     => 'Mysql',

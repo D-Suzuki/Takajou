@@ -3,11 +3,16 @@ namespace Ini;
 
 class Db {
 
+    /**
+     * Db設定配列を返却
+     * @return array
+     */
     public static function load() {
+
         return array(
             'db' => array(
                 // clusterMode
-                \Takajou\Def\Db\ClusterMode::NONE => array(
+                \Takajou\Db\Manager::CLUSTER_MODE_MASTER => array(
                     // dbCode
                     'gsdb_trun' => array(
                         // descriptor

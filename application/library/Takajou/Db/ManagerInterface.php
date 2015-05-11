@@ -18,7 +18,6 @@ interface ManagerInterface  {
     public function getDbConfig($dbCode);
 
     // クラスタモード変更
-    public function clusterModeOff();
     public function masterModeOn();
     public function slaveModeOn();
 

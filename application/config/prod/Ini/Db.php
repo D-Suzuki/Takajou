@@ -6,8 +6,11 @@ class Db {
     public static function load() {
         return array(
             'db' => array(
-                \Takajou\Def\Db\ClusterMode::NONE => array(
+                // clusterMode
+                \Takajou\Db\Manager::CLUSTER_MODE_MASTER => array(
+                    // dbCode
                     'gsdb_trun' => array(
+                        // descriptor
                         'diName'      => 'gsdb_trun',
                         'adapter'     => 'Mysql',
                         'host'        => 'db01',

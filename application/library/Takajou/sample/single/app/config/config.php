@@ -4,7 +4,7 @@ return array(
 # DB #
 ######
     'db' => array(
-        \Takajou\Def\Db\ClusterMode::MASTER => array(
+        \Takajou\Db\Manager::CLUSTER_MODE_MASTER => array(
             'master' => array(
                 'diName'      => 'master_master',
                 'adapter'     => 'Mysql',
@@ -39,7 +39,7 @@ return array(
                 'logFile'     => __DIR__ . '/../../app/log/sql.log',
             ),
         ),
-        \Takajou\Def\Db\ClusterMode::SLAVE => array(
+        \Takajou\Db\Manager::CLUSTER_MODE_SLAVE => array(
             'master' => array(
                 'diName'      => 'slave_master',
                 'adapter'     => 'Mysql',

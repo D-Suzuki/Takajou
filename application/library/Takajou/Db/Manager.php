@@ -7,6 +7,10 @@ namespace Takajou\Db;
  */
 class Manager implements ManagerInterface {
 
+    // クラスタモード
+    const CLUSTER_MODE_MASTER = 'master';
+    const CLUSTER_MODE_SLAVE  = 'slave';
+
 ##############
 # プロパティ #
 ##############
@@ -19,10 +23,10 @@ class Manager implements ManagerInterface {
 
     /**
      * クラスタモード
-     * [ NONE/MASTER/SLAVE ]
+     * [ MASTER/SLAVE ]
      * @var string
      */
-    private $clusterMode = \Takajou\Def\Db\ClusterMode::NONE;
+    private $clusterMode = self::CLUSTER_MODE_MASTER;
 
 
     /**
@@ -48,6 +52,7 @@ class Manager implements ManagerInterface {
      * @param \Phalcon\Config $dbConfigs
      */
     public function __construct(\Phalcon\Config $dbConfigs) {
+
         if (!$dbConfigs) {
 //TODO:
         }
@@ -138,18 +143,10 @@ class Manager implements ManagerInterface {
 # クラスタモード変更 #
 ######################
     /**
-     * クラスタモードを「NONE」へ変更
-     */
-    public function clusterModeOff() {
-        $this->setClusterMode(\Takajou\Def\Db\ClusterMode::NONE);
-    }
-
-
-    /**
      * クラスタモードを「MASTER」へ変更
      */
     public function masterModeOn() {
-        $this->setClusterMode(\Takajou\Def\Db\ClusterMode::MASTER);
+        $this->setClusterMode(self::CLUSTER_MODE_MASTER);
     }
 
 
@@ -157,7 +154,7 @@ class Manager implements ManagerInterface {
      * クラスタモードを「SLAVE」へ変更
      */
     public function slaveModeOn() {
-        $this->setClusterMode(\Takajou\Def\Db\ClusterMode::SLAVE);
+        $this->setClusterMode(self::CLUSTER_MODE_SLAVE);
     }
 
 
