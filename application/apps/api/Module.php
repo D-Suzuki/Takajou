@@ -9,9 +9,14 @@ class Module implements \Phalcon\Mvc\ModuleDefinitionInterface
      */
     public function registerAutoloaders(\Phalcon\DiInterface $di = null) {
 
+        // Apacheの環境変数から環境(本番/開発)を取得
+        $env = getenv('ENV');
+        $env = (empty($env)) ? 'prod' : $env ;
+
         $loaderObj = new \Phalcon\Loader();
         $loaderObj->registerDirs(array(
             __DIR__ . '/controllers/',
+            __DIR__ . '/../../config/' . $env,
             __DIR__ . '/../../models',
             __DIR__ . '/../../library',
         ))->register();
@@ -26,8 +31,11 @@ class Module implements \Phalcon\Mvc\ModuleDefinitionInterface
     public function registerServices(\Phalcon\DiInterface $di) {
 
         // apiモジュール用コンフィグをロード
-        $config    = include __DIR__ . "/config/config.php";
-        $configObj = new \Phalcon\Config($config);
+        $configObj      = new \Phalcon\Config();
+        $configObj->merge(new \Phalcon\Config(\Ini\Db::load()));
+        $configObj->merge(new \Phalcon\Config(\Ini\Url::load()));
+        $configObj->merge(new \Phalcon\Config(\Ini\View::load()));
+        $configObj->merge(new \Phalcon\Config(\Ini\Response::load()));
 
         // DIコンテナ登録
         $serviceObj = new \Takajou\Bootstrap\Service();

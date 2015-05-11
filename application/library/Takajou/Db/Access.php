@@ -41,11 +41,11 @@ class Access implements \Takajou\Db\AccessInterface {
     /**
      * コネクション生成(シングルトンタイプ)
      * 生成したコネクションはコネクションプールへ格納
-     * @param  string $dbName
+     * @param  string $dbCode
      * @return int    $connectionId
      */
-    public function createSharedConnection($dbName, $isBegin = false) {
-        $dbConfig = $this->dbManagerObj->getDbConfig($dbName);
+    public function createSharedConnection($dbCode, $isBegin = false) {
+        $dbConfig = $this->dbManagerObj->getDbConfig($dbCode);
         if (!$dbConfig) {
 //TODO:throw exception
         }
@@ -63,11 +63,11 @@ class Access implements \Takajou\Db\AccessInterface {
     /**
      * コネクション生成(非シングルトンタイプ)
      * 生成したコネクションはコネクションプールへ格納
-     * @param  string $dbName
+     * @param  string $dbCode
      * @return int    $connectionId
      */
-    public function createConnection($dbName, $isBegin = false) {
-        $dbConfig = $this->dbManagerObj->getDbConfig($dbName);
+    public function createConnection($dbCode, $isBegin = false) {
+        $dbConfig = $this->dbManagerObj->getDbConfig($dbCode);
         if (!$dbConfig) {
 //TODO:throw exception
         }

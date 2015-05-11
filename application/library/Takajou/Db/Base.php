@@ -37,13 +37,13 @@ abstract class Base {
     final public function __construct(\Takajou\Db\AccessInterface $dbAccessObj) {
         $this->dbAccessObj = $dbAccessObj;
         // 同一DBの接続は使いまわすためgetSharedで取得
-        $this->connectionId = $dbAccessObj->createSharedConnection($this->getConnectDbName());
+        $this->connectionId = $dbAccessObj->createSharedConnection($this->getConnectDbCode());
     }
 
 
-    // 接続先のDB名を取得する
-    // config.phpで指定したdatabasesの2階層目の配列キーを指定する
-    abstract protected function getConnectDbName();
+    // 接続先のDBコードを取得する
+    // \Db\Iniで指定したdbの2階層目の配列キーを指定する
+    abstract protected function getConnectDbCode();
 
 
 ############

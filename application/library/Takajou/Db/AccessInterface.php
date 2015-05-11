@@ -8,8 +8,8 @@ namespace Takajou\Db;
 interface AccessInterface {
 
     // コネクション生成
-    public function createSharedConnection($dbName, $isBegin = false);
-    public function createConnection($dbName, $isBegin = false);
+    public function createSharedConnection($dbCode, $isBegin = false);
+    public function createConnection($dbCode, $isBegin = false);
     
     // コネクション操作
     public function beginTransaction($connectionId);

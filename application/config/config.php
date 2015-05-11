@@ -3,7 +3,7 @@ return array(
 ######
 # DB #
 ######
-    'databases' => array(
+    'db' => array(
         \Takajou\Def\Db\ClusterMode::NONE => array(
             'gsdb_trun' => array(
                 'diName'      => 'gsdb_trun',

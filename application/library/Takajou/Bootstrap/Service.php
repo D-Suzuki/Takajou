@@ -13,7 +13,7 @@ class Service {
 #######
 # URL #
 #######
-        if ($configObj->url) {
+        if ($configObj->offsetExists('url')) {
             $di->set('url', function () use ($configObj) {
                 $urlObj = new UrlResolver();
                 $urlObj->setBaseUri($configObj->services->url->baseUri);
@@ -25,7 +25,7 @@ class Service {
 ########
 # View #
 ########
-        if ($configObj->view) {
+        if ($configObj->offsetExists('view')) {
             $di->set('view', function() {
                 $view = new \Phalcon\Mvc\View();
                 if (isset($configObj->view->viewsDir)) {
@@ -38,7 +38,7 @@ class Service {
 ############
 # Response #
 ############
-        if ($configObj->response) {
+        if ($configObj->offsetExists('response')) {
             $di->set('response', function() use($configObj) {
                 $response = new \Phalcon\Http\Response();
                 $response->setContentType($configObj->response->contentType->mimeType, $configObj->response->contentType->charset);
@@ -49,50 +49,53 @@ class Service {
 ##########
 # DB関連 #
 ##########
-        // DB Manager
-        $di->setShared('dbManager', function() use($configObj) {
-            $dbManagerObj = new \Takajou\Db\Manager($configObj->databases);
-            return $dbManagerObj;
-        });
+        if ($configObj->offsetExists('db')) {
 
-        // DB Access
-        $di->setShared('dbAccess', function() use($di) {
-            $dbManagerObj = $di->getShared('dbManager');
-            $dbAccessObj  = new \Takajou\Db\Access($di, $dbManagerObj);
-            return $dbAccessObj;
-        });
-
-        // DB Connection
-        foreach($configObj->databases as $clusterMode => $databases) {
-            foreach($databases as $dbName => $dbConfigObj) {
-                $di->set($dbConfigObj->diName, function () use($di, $dbConfigObj) {
-                    // 接続情報
-                    $descriptor = array(
-                        'host'     => $dbConfigObj->host,
-                        'username' => $dbConfigObj->username,
-                        'password' => $dbConfigObj->password,
-                        'dbname'   => $dbConfigObj->dbName,
-                        'charset'  => $dbConfigObj->charset,
-                    );
-                    
-                    // DB接続
-                    $connectionObj = new \Takajou\Db\Adapter\Pdo\Mysql($descriptor);
-
-                    // DBリスナーを生成
-                    $dbManagerObj  = $di->getShared('dbManager');
-                    $loggerObj     = new \Phalcon\Logger\Adapter\File($dbConfigObj->logFile);
-                    $dbListenerObj = new \Takajou\Db\Listener($dbManagerObj, $dbConfigObj, $loggerObj);
-
-                    // DBコネクションのイベントマネージャを登録
-                    $eventsManager = new \Phalcon\Events\Manager();
-                    $eventsManager->attach('db', $dbListenerObj);
-                    $connectionObj->setEventsManager($eventsManager);
-
-                    // 初期DB接続時イベント発火
-                    $connectionObj->getEventsManager()->fire('db:afterConnect', $connectionObj);
-
-                    return $connectionObj;
-                });
+            // DB Manager
+            $di->setShared('dbManager', function() use($configObj) {
+                $dbManagerObj = new \Takajou\Db\Manager($configObj->db);
+                return $dbManagerObj;
+            });
+    
+            // DB Access
+            $di->setShared('dbAccess', function() use($di) {
+                $dbManagerObj = $di->getShared('dbManager');
+                $dbAccessObj  = new \Takajou\Db\Access($di, $dbManagerObj);
+                return $dbAccessObj;
+            });
+    
+            // DB Connection
+            foreach($configObj->db as $clusterMode => $databases) {
+                foreach($databases as $dbCode => $dbConfigObj) {
+                    $di->set($dbConfigObj->diName, function () use($di, $dbConfigObj) {
+                        // 接続情報
+                        $descriptor = array(
+                            'host'     => $dbConfigObj->host,
+                            'username' => $dbConfigObj->username,
+                            'password' => $dbConfigObj->password,
+                            'dbname'   => $dbConfigObj->dbName,
+                            'charset'  => $dbConfigObj->charset,
+                        );
+                        
+                        // DB接続
+                        $connectionObj = new \Takajou\Db\Adapter\Pdo\Mysql($descriptor);
+    
+                        // DBリスナーを生成
+                        $dbManagerObj  = $di->getShared('dbManager');
+                        $loggerObj     = new \Phalcon\Logger\Adapter\File($dbConfigObj->logFile);
+                        $dbListenerObj = new \Takajou\Db\Listener($dbManagerObj, $dbConfigObj, $loggerObj);
+    
+                        // DBコネクションのイベントマネージャを登録
+                        $eventsManager = new \Phalcon\Events\Manager();
+                        $eventsManager->attach('db', $dbListenerObj);
+                        $connectionObj->setEventsManager($eventsManager);
+    
+                        // 初期DB接続時イベント発火
+                        $connectionObj->getEventsManager()->fire('db:afterConnect', $connectionObj);
+    
+                        return $connectionObj;
+                    });
+                }
             }
         }
 

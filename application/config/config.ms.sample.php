@@ -3,7 +3,7 @@ return array(
 ######
 # DB #
 ######
-    'databases' => array(
+    'db' => array(
         \Takajou\Def\Db\ClusterMode::MASTER => array(
             'master' => array(
                 'diName'      => 'master_master',

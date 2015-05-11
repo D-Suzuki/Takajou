@@ -15,7 +15,7 @@ interface ManagerInterface  {
     public function getBeginedConnectionIds();
 
     // dbConfig取得
-    public function getDbConfig($dbName);
+    public function getDbConfig($dbCode);
 
     // クラスタモード変更
     public function clusterModeOff();

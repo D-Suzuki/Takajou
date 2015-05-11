@@ -124,9 +124,9 @@ class Manager implements ManagerInterface {
 ################
 # dbConfig取得 #
 ################
-    public function getDbConfig($dbName) {
+    public function getDbConfig($dbCode) {
         $dbConfigs  = $this->getDbConfigs();
-        $dbConfig   = $dbConfigs[$this->getClusterMode()][$dbName];
+        $dbConfig   = $dbConfigs[$this->getClusterMode()][$dbCode];
         if (!$dbConfig) {
             return false;
         }
