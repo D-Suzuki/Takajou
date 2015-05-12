@@ -5,14 +5,24 @@ error_reporting(E_ALL);
 try {
 
     /**
+     * 基本定数クラスロード
+     */
+    include __DIR__ . "/../application/def.php";
+
+    /**
+     * ユーティリティクラスロード
+     */
+    include __DIR__ . "/utility.php";
+
+    /**
      * デフォルトDIコンテナ
      */
     $di = new \Phalcon\DI\FactoryDefault();
-    
+
     /**
      * ルーティング登録
      */
-    $routingClosure = include __DIR__ . "/../application/config/routing.php";
+    $routingClosure = include Def::APPLICATION_PATH . "/config/routing.php";
     $di->set('router', $routingClosure);
 
     /**
@@ -22,10 +32,10 @@ try {
     $applicationObj->registerModules(array(
         'api' => array(
             'className' => 'Multiple\Api\Module',
-            'path'      => __DIR__ . '/../application/apps/api/Module.php'),
+            'path'      => Def::APPLICATION_PATH . '/apps/api/Module.php'),
         'admin'  => array(
             'className' => 'Multiple\Admin\Module',
-            'path'      => __DIR__ . '/../application/apps/admin/Module.php')
+            'path'      => Def::APPLICATION_PATH . '/apps/admin/Module.php')
     ));
 
     /**
@@ -50,5 +60,8 @@ try {
     if ($di->has('dbManager') && $di->get('dbManager')->hasBeginedTransaction()) {
         $di->get('dbAccess')->allRollback();
     }
-    echo $e->getMessage();
+    
+    echo sprintf('%s: in %s on line %d', $e->getMessage(), $e->getFile(), $e->getLine());
+    echo PHP_EOL . ' --- Trace Info --- ' .  PHP_EOL;
+    echo $e->getTraceAsString();
 }

@@ -9,14 +9,10 @@ class Module implements \Phalcon\Mvc\ModuleDefinitionInterface
      */
     public function registerAutoloaders(\Phalcon\DiInterface $di = null) {
 
-        // Apacheの環境変数から環境(本番/開発)を取得
-        $env = getenv('ENV');
-        $env = (empty($env)) ? 'prod' : $env ;
-
         $loaderObj = new \Phalcon\Loader();
         $loaderObj->registerDirs(array(
             __DIR__ . '/controllers/',
-            __DIR__ . '/../../config/' . $env,
+            __DIR__ . '/../../config/',
             __DIR__ . '/../../models',
             __DIR__ . '/../../library',
         ))->register();

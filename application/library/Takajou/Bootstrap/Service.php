@@ -50,7 +50,6 @@ class Service {
 # DB関連 #
 ##########
         if ($configObj->offsetExists('db')) {
-
             // DB Manager
             $di->setShared('dbManager', function() use($configObj) {
                 $dbManagerObj = new \Takajou\Db\Manager($configObj->db);
@@ -79,10 +78,10 @@ class Service {
                         
                         // DB接続
                         $connectionObj = new \Takajou\Db\Adapter\Pdo\Mysql($descriptor);
-    
+
                         // DBリスナーを生成
                         $dbManagerObj  = $di->getShared('dbManager');
-                        $loggerObj     = new \Phalcon\Logger\Adapter\File($dbConfigObj->logFile);
+                        $loggerObj     = new \Phalcon\Logger\Adapter\File($dbConfigObj->logPath . '/' . $dbConfigObj->logFile);
                         $dbListenerObj = new \Takajou\Db\Listener($dbManagerObj, $dbConfigObj, $loggerObj);
     
                         // DBコネクションのイベントマネージャを登録
