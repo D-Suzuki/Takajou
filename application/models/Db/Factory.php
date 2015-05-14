@@ -34,11 +34,11 @@ class Factory extends \Takajou\Factory\Base {
     public static function createInstance($appName, $dbName, $tableName) {
 
         // クラス名生成
-        if(!$dbName || !$tableName) return false;
-        $className = self::makeClassName('Db', array($appName, $dbName, $tableName));
+        if (!$dbName || !$tableName) return false;
+        $className = parent::makeClassName('Db', array($appName, $dbName, $tableName));
 
         // すでにクラスが生成されていれば返す
-        if ($retusnClass = self::getInstance($className)) {
+        if ($retusnClass = parent::getInstance($className)) {
             return $retusnClass;
         }
 
@@ -58,7 +58,7 @@ class Factory extends \Takajou\Factory\Base {
         $returnClass = new $className($dbAccesssObj); 
         
         // インスタンスを使い回すためインスタンスプールに保存
-        self::setInstance($className, $returnClass);
+        parent::setInstance($className, $returnClass);
         return $returnClass;
     }
 }
