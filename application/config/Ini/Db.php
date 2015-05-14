@@ -18,7 +18,7 @@ class Db extends \Ini\Base {
                     'dbName'      => 'gsdb_trun',
                     'charset'     => 'utf8',
                     'isSqlLoging' =>  true,
-                    'logPath'     =>  \Def::LOG_PATH,
+                    'logPath'     =>  \Def\PATH::LOG,
                     'logFile'     => 'db_gsdb_trun.log'
                 ),
             ),

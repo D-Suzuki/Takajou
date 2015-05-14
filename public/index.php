@@ -13,7 +13,7 @@ try {
      * ユーティリティクラスロード
      */
     include __DIR__ . "/utility.php";
-
+    
     /**
      * デフォルトDIコンテナ
      */
@@ -22,7 +22,7 @@ try {
     /**
      * ルーティング登録
      */
-    $routingClosure = include Def::APPLICATION_PATH . "/config/routing.php";
+    $routingClosure = include \Def\PATH::CONFIG . "/routing.php";
     $di->set('router', $routingClosure);
 
     /**
@@ -32,10 +32,10 @@ try {
     $applicationObj->registerModules(array(
         'api' => array(
             'className' => 'Multiple\Api\Module',
-            'path'      => Def::APPLICATION_PATH . '/apps/api/Module.php'),
+            'path'      => \Def\PATH::MODULE_API   . '/Module.php'),
         'admin'  => array(
             'className' => 'Multiple\Admin\Module',
-            'path'      => Def::APPLICATION_PATH . '/apps/admin/Module.php')
+            'path'      => \Def\PATH::MODULE_ADMIN . '/Module.php')
     ));
 
     /**

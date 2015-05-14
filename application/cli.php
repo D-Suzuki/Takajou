@@ -18,10 +18,10 @@ include __DIR__ . "/../public/utility.php";
 $loader = new \Phalcon\Loader();
 $loader->registerDirs(
     array(
-        \Def::APPLICATION_PATH . '/config/',
-        \Def::APPLICATION_PATH . '/library',
-        \Def::APPLICATION_PATH . '/models',
-        \Def::APPLICATION_PATH . '/tasks',
+        \Def\PATH::CONFIG,
+        \Def\PATH::LIBRARY,
+        \Def\PATH::MODELS,
+        \Def\PATH::TASKS,
     )
 );
 $loader->register();

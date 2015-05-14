@@ -11,9 +11,9 @@ class Utility {
         // ホスト名取得
         list($identifier) = explode( '.', exec( 'hostname' ) );
         if ( strcmp( $identifier, 'dev' ) == 0 ) {
-            return \Def::ENV_TYPE_DEVELOP;
+            return \Def\ENV::DEVELOP;
         } else {
-            return \Def::ENV_TYPE_PRODUCT;
+            return \Def\ENV::PRODUCT;
         }
     }
 }

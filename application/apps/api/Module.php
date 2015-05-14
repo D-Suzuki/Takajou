@@ -11,10 +11,10 @@ class Module implements \Phalcon\Mvc\ModuleDefinitionInterface
 
         $loaderObj = new \Phalcon\Loader();
         $loaderObj->registerDirs(array(
-            __DIR__ . '/controllers/',
-            __DIR__ . '/../../config/',
-            __DIR__ . '/../../models',
-            __DIR__ . '/../../library',
+            \Def\PATH::MODULE_API . '/controllers/',
+            \Def\PATH::CONFIG,
+            \Def\PATH::MODELS,
+            \Def\PATH::LIBRARY,
         ))->register();
 
         $loaderObj->register();

@@ -4,22 +4,25 @@ namespace Multiple\Admin;
 class Module implements \Phalcon\Mvc\ModuleDefinitionInterface
 {
     /**
-     * Register a specific autoloader for the module
+     * adminモジュールのオートローダ登録
+     * @param \Phalcon\DiInterface $di
      */
     public function registerAutoloaders($di) {
-echo 'test';exit;
+
         $loaderObj = new \Phalcon\Loader();
-        $loaderObj->registerNamespaces(array(
-            'Multiple\Api\Controllers' => __DIR__ . '/controllers/',
-            'Multiple\Api\Config'      => __DIR__ . '/config/',
-            'Multiple\Api\Models'      => __DIR__ . '/models/',
+        $loaderObj->registerDirs(array(
+            \Def\PATH::MODULE_ADMIN . '/controllers/',
+            \Def\PATH::CONFIG,
+            \Def\PATH::MODELS,
+            \Def\PATH::LIBRARY,
         ))->register();
 
         $loaderObj->register();
     }
 
     /**
-     * Register specific services for the module
+     * adminモジュールのDIコンテナ登録
+     * @param \Phalcon\DiInterface $di
      */
     public function registerServices($di) {
 

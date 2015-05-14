@@ -11,12 +11,12 @@ include __DIR__ . '/../../def.php';
 /**
  * ユーティリティクラスロード
  */
-include \Def::APPLICATION_PATH . '/../public/utility.php';
+include \Def\PATH::APPLICATION . '/../public/utility.php';
 
 /**
  * phpmig用のライブラリを読込
  */
-include \Def::PHPMIG_PATH . '/vendor/autoload.php';
+include \Def\PATH::PHPMIG . '/vendor/autoload.php';
 
 /**
  * オートローダ登録
@@ -24,8 +24,8 @@ include \Def::PHPMIG_PATH . '/vendor/autoload.php';
 $loader = new \Phalcon\Loader();
 $loader->registerDirs(
     array(
-        \Def::APPLICATION_PATH . '/config/',
-        \Def::APPLICATION_PATH . '/library/',
+        \Def\PATH::APPLICATION . '/config/',
+        \Def\PATH::APPLICATION . '/library/',
     )
 );
 $loader->register();
@@ -58,6 +58,6 @@ $container['phpmig.adapter'] = $container->share(function() use ($container) {
 /**
  * マイグレーションパス
  */
-$container['phpmig.migrations_path'] = \Def::APPLICATION_PATH . '/library/phpmig/migrations';
+$container['phpmig.migrations_path'] = \Def\PATH::LIBRARY . '/phpmig/migrations';
 
 return $container;
