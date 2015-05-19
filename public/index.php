@@ -12,7 +12,7 @@ try {
     /**
      * ユーティリティクラスロード
      */
-    include __DIR__ . "/utility.php";
+    include __DIR__ . "/Util.php";
     
     /**
      * デフォルトDIコンテナ

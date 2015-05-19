@@ -1,12 +1,14 @@
 <?php
-class Utility {
+namespace Util;
+
+class Env {
 
     /**
      * 環境タイプ取得
      * @return string
      * [ 'prod' / 'dev' ]
      */
-    public static function getEnv() {
+    public static function getType() {
 
         // ホスト名取得
         list($identifier) = explode( '.', exec( 'hostname' ) );
@@ -16,4 +18,5 @@ class Utility {
             return \Def\ENV::PRODUCT;
         }
     }
+
 }

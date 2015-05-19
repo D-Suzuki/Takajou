@@ -13,7 +13,7 @@ class Base {
         $class = get_called_class();
 
         // 開発環境の場合は$devConfigを$configにマージ
-        if (\Utility::getEnv() == \Def\ENV::DEVELOP && isset($class::$devConfig)) {
+        if (\Util\Env::getType() == \Def\ENV::DEVELOP && isset($class::$devConfig)) {
             self::mergeConfig($class::$devConfig, $class::$config);
         }
         return $class::$config;
