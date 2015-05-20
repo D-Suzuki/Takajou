@@ -29,3 +29,10 @@ class ENV {
     const PRODUCT      = 'prod';
     const DEVELOP      = 'dev';
 }
+
+
+class STRING {
+    const TYPE_UCC     = 'UpperCamelCase';
+    const TYPE_LCC     = 'lowerCamelCase';
+    const TYPE_SC      = 'snake_case';
+}

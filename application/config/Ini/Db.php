@@ -15,7 +15,7 @@ class Db extends \Ini\Base {
                     'host'        => 'db01',
                     'username'    => 'gsa',
                     'password'    => 'Pptx3jkla',
-                    'dbName'      => 'gsdb_trun',
+                    'dbname'      => 'gsdb_trun',
                     'charset'     => 'utf8',
                     'isSqlLoging' =>  true,
                     'logPath'     =>  \Def\PATH::LOG,

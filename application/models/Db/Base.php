@@ -15,7 +15,7 @@ abstract class Base extends \Takajou\Db\Base {
         $tableClass = get_called_class();
         $className  = \Util\String::afterLastKey($tableClass, '\\');
         $tableName  = \Util\String::camelToSnake($className);
-    
+
         return $tableName;
     }
 

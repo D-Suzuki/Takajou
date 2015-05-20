@@ -3,6 +3,10 @@ namespace Db\Gsa\Trun;
 
 class AdminUserData extends \Db\Gsa\Trun {
 
-    const PK= 'admin_id';
+    /**
+     * プライマリーキー
+     * @var string
+     */
+    const PK = 'admin_id';
 
 }

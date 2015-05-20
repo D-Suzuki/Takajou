@@ -59,7 +59,7 @@ class String {
      * @param string $type
      * @return string
      */
-    public static function snakeToCamel($snakeString, $type = \Def\STRING::UCC) {
+    public static function snakeToCamel($snakeString, $type = \Def\STRING::TYPE_UCC) {
 
         $tokens = explode('_', $snakeString);
         foreach ($tokens as $index => $val) {
@@ -69,7 +69,7 @@ class String {
                 } else {
                     $tokens[$index] = ucfirst($val);
                 }
-            } elseif($type === \Def\STRING::UCC) {
+            } elseif($type === \Def\STRING::TYPE_UCC) {
                 $tokens[$index] = ucfirst($val);
             } else {
                 

@@ -72,7 +72,7 @@ class Service {
                             'host'     => $dbConfigObj->host,
                             'username' => $dbConfigObj->username,
                             'password' => $dbConfigObj->password,
-                            'dbname'   => $dbConfigObj->dbName,
+                            'dbname'   => $dbConfigObj->dbname,
                             'charset'  => $dbConfigObj->charset,
                         );
                         
