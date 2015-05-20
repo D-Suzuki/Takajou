@@ -38,8 +38,8 @@ class Factory extends \Takajou\Factory\Base {
         $className = parent::makeClassName('Db', array($appName, $dbName, $tableName));
 
         // すでにクラスが生成されていれば返す
-        if ($retusnClass = parent::getInstance($className)) {
-            return $retusnClass;
+        if ($returnClass = parent::getInstance($className)) {
+            return $returnClass;
         }
 
         // クラスの存在チェック

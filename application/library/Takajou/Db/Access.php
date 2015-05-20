@@ -201,7 +201,7 @@ class Access implements \Takajou\Db\AccessInterface {
     public function exec($connectionId, $query, $bindParams) {
 
         $connection = $this->dbManagerObj->getConnection($connectionId);
-        return $connection->execute($query);
+        return $connection->execute($query, $bindParams);
     }
 
 

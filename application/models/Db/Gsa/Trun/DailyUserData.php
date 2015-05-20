@@ -3,7 +3,7 @@ namespace Db\Gsa\Trun;
 
 class DailyUserData extends \Db\Gsa\Trun {
 
-    private $tableName = 'daily_user_data';
+    const PK = 'test';
 
     public function getSalesData() {
 

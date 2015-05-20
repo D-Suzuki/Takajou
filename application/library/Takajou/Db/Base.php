@@ -93,7 +93,16 @@ abstract class Base {
      * @return array
      */
     public function select() {
-        return $this->getDbAccessObj()->select($this->connectionId, $this->query, $this->bindParams);
+        return $this->dbAccessObj->select($this->connectionId, $this->query, $this->bindParams);
+    }
+
+
+    /**
+     * クエリの実行(SELECT) - 1行のみ取得
+     * @return array
+     */
+    public function selectRow() {
+        return $this->dbAccessObj->selectRow($this->connectionId, $this->query, $this->bindParams);
     }
 
 
@@ -102,7 +111,7 @@ abstract class Base {
      * @return PDOStatement
      */
     public function getPdoStatement() {
-        return $this->getDbAccessObj()->getPdoStatement($this->connectionId, $this->query, $this->bindParams);
+        return $this->dbAccessObj->getPdoStatement($this->connectionId, $this->query, $this->bindParams);
     }
 
 
@@ -111,7 +120,7 @@ abstract class Base {
      * @return
      */
     public function exec() {
-        return $this->getDbAccessObj()->exec($this->connectionId, $this->query, $this->bindParams);
+        return $this->dbAccessObj->exec($this->connectionId, $this->query, $this->bindParams);
     }
 
 
@@ -120,7 +129,7 @@ abstract class Base {
      * @return
      */
     public function getLastInsertId() {
-        return $this->getDbAccessObj()->getLastInsertId($this->connectionId);
+        return $this->dbAccessObj->getLastInsertId($this->connectionId);
     }
 
 ####################
@@ -130,7 +139,7 @@ abstract class Base {
      * トランザクションスタート
      */
     public function beginTransaction() {
-        $this->getDbAccessObj()->beginTransaction($this->connectionId);
+        $this->dbAccessObj->beginTransaction($this->connectionId);
     }
 
 
@@ -138,7 +147,7 @@ abstract class Base {
      * 切断
      */
     public function closeConnection() {
-        $this->getDbAccessObj()->closeConnection($this->connectionId);
+        $this->dbAccessObj->closeConnection($this->connectionId);
     }
 
 
@@ -147,19 +156,14 @@ abstract class Base {
      * @param boorean $isBegin
      */
     public function reConnect($isBegin = false) {
-        $this->getDbAccessObj()->reConnect($this->connectionId);
+        $this->dbAccessObj->reConnect($this->connectionId);
         if ($isBegin) {
             $this->beginTransaction();
         }
     }
 
-
     /* public function getSqlBuilder() {
         return $this->getDi()->getShared('sqlBuilder');
     } */
 
-
-    private function getDbAccessObj() {
-        return $this->dbAccessObj;
-    }
 }

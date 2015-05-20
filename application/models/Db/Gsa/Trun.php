@@ -1,7 +1,7 @@
 <?php
 namespace Db\Gsa;
 
-class Trun extends \Takajou\Db\Base {
+abstract class Trun extends \Db\Base {
 
     public function getConnectDbCode() {
         return 'gsdb_trun';
