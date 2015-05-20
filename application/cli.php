@@ -10,7 +10,7 @@ include __DIR__ . "/../application/def.php";
 /**
  * ユーティリティクラスロード
  */
-include __DIR__ . "/../public/utility.php";
+include __DIR__ . "/../public/Util.php";
 
 /**
  * オートローダ登録

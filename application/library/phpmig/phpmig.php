@@ -11,7 +11,7 @@ include __DIR__ . '/../../def.php';
 /**
  * ユーティリティクラスロード
  */
-include \Def\PATH::APPLICATION . '/../public/utility.php';
+include \Def\PATH::APPLICATION . '/../public/Util.php';
 
 /**
  * phpmig用のライブラリを読込
@@ -42,7 +42,7 @@ $configObj->merge(new \Phalcon\Config(\Ini\Db::load()));
 $container = new Pimple();
 $dbConfigObj = $configObj->db->master->gsdb_trun;
 $container['gsdb_trun'] = $container->share(function() use($dbConfigObj) {
-    $dsn = sprintf('mysql:dbname=%s;host=%s', $dbConfigObj->dbName, $dbConfigObj->host);
+    $dsn = sprintf('mysql:dbname=%s;host=%s', $dbConfigObj->dbname, $dbConfigObj->host);
     $dbh = new PDO($dsn, $dbConfigObj->username, $dbConfigObj->password);
     $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     return $dbh;
