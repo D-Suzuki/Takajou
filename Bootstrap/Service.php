@@ -74,6 +74,7 @@ class Service {
                             'password' => $dbConfigObj->password,
                             'dbname'   => $dbConfigObj->dbname,
                             'charset'  => $dbConfigObj->charset,
+                            'port'     => $dbConfigObj->port,
                         );
                         
                         // DB接続
