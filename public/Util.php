@@ -36,6 +36,7 @@ class String {
      * 指定したkeyが最後に出現する位置以降の文字列を抽出
      * @param  string $key
      * @return string
+     * 
      * 例：$string => 「/path/to/file.txt」
      *     $key    => 「/」
      *     return  => 「file.txt」
@@ -47,6 +48,8 @@ class String {
 
     /**
      * キャメルケース → スネークケース
+     * @param  string $camelString
+     * @return string
      */
     public static function camelToSnake($camelString) {
         return strToLower(preg_replace('/([a-z])([A-Z])/', "$1_$2", $camelString));
@@ -55,15 +58,16 @@ class String {
 
     /**
      * スネークケース → キャメルケース
-     * @param unknown $snakeString
-     * @param string $type
+     * @param string $snakeString
+     * @param int    $type 「\Def\STRING::TYPE_UCC」 => アッパーキャメル
+     *                     「\Def\STRING::TYPE_LCC」 => ローワーキャメル
      * @return string
      */
     public static function snakeToCamel($snakeString, $type = \Def\STRING::TYPE_UCC) {
 
         $tokens = explode('_', $snakeString);
         foreach ($tokens as $index => $val) {
-            if($type === \Def\STRING::LCC) {
+            if($type === \Def\STRING::TYPE_LCC) {
                 if ($index == 0) {
                     $tokens[$index] = lcfirst($val);
                 } else {
