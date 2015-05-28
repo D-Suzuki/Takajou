@@ -107,6 +107,38 @@ class Service {
             return $configObj;
         }); */
 
+##############
+# dispatcher #
+##############
+        if ($configObj->offsetExists('dispatcher')) {
+
+            $di->set('dispatcher', function() use($configObj) {
+                $eventsManager = new \Phalcon\Events\Manager();
+                $eventsManager->attach('dispatch:beforeException', function($event, $dispatcher, $exception) use($configObj) {
+
+                // 404ページルーティングイベントを登録
+                if ($exception instanceof \Phalcon\Mvc\Dispatcher\Exception) {
+                    switch ($exception->getCode()) {
+                        case \Phalcon\Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
+                        case \Phalcon\Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
+                        // 404ページへ遷移
+                        $dispatcher->forward(array(
+                            'controller' => $configObj->dispatcher->controller_404,
+                            'action'     => $configObj->dispatcher->action_404,
+                        ));
+                        return false;
+                    }
+                }
+            });
+
+            //Dispatcherの基本動作を設定
+            $dispatcher = new \Phalcon\Mvc\Dispatcher();
+            $dispatcher->setEventsManager($eventsManager);
+
+            return $dispatcher;
+            });
+        }
+        
         $this->di = $di;
     }
 
