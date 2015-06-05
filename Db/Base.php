@@ -77,11 +77,38 @@ abstract class Base {
 
 
     /**
+     * bindParmasへの追加（値単位）
+     * @param unknown $bindParams
+     */
+    public function addBindParam($bindParam) {
+        array_push($this->bindParams, $bindParam);
+    }
+
+
+    /**
+     * bindParmasへの追加（配列単位）
+     * @param unknown $bindParams
+     */
+    public function addBindParams($bindParams) {
+        $this->bindParams = array_merge($this->bindParams, $bindParams);
+    }
+
+
+    /**
      * bindParamsへのgetter
      * @return array
      */
     public function getBindParams() {
         return $this->bindParams;
+    }
+
+
+    /**
+     * クエリとパラメーターをリセット
+     */
+    public function resetQueryAndParams() {
+        $this->query      = null;
+        $this->bindParams = array();
     }
 
 
@@ -93,7 +120,9 @@ abstract class Base {
      * @return array
      */
     public function select() {
-        return $this->dbAccessObj->select($this->connectionId, $this->query, $this->bindParams);
+        $result = $this->dbAccessObj->select($this->connectionId, $this->query, $this->bindParams);
+        $this->resetQueryAndParams();
+        return $result;
     }
 
 
@@ -102,7 +131,9 @@ abstract class Base {
      * @return array
      */
     public function selectRow() {
-        return $this->dbAccessObj->selectRow($this->connectionId, $this->query, $this->bindParams);
+        $result = $this->dbAccessObj->selectRow($this->connectionId, $this->query, $this->bindParams);
+        $this->resetQueryAndParams();
+        return $result;
     }
 
 
@@ -111,7 +142,9 @@ abstract class Base {
      * @return PDOStatement
      */
     public function getPdoStatement() {
-        return $this->dbAccessObj->getPdoStatement($this->connectionId, $this->query, $this->bindParams);
+        $result = $this->dbAccessObj->getPdoStatement($this->connectionId, $this->query, $this->bindParams);
+        $this->resetQueryAndParams();
+        return $result;
     }
 
 
@@ -120,7 +153,9 @@ abstract class Base {
      * @return
      */
     public function exec() {
-        return $this->dbAccessObj->exec($this->connectionId, $this->query, $this->bindParams);
+        $result = $this->dbAccessObj->exec($this->connectionId, $this->query, $this->bindParams);
+        $this->resetQueryAndParams();
+        return $result;
     }
 
 
