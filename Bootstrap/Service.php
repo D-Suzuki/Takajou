@@ -66,7 +66,7 @@ class Service {
             // DB Connection
             foreach($configObj->db as $clusterMode => $databases) {
                 foreach($databases as $dbCode => $dbConfigObj) {
-                    $di->set($dbConfigObj->diName, function () use($di, $dbConfigObj) {
+                    $di->set($dbConfigObj->diName, function () use($di, $configObj, $dbConfigObj) {
                         // 接続情報
                         $descriptor = array(
                             'host'     => $dbConfigObj->host,
@@ -76,6 +76,10 @@ class Service {
                             'charset'  => $dbConfigObj->charset,
                             'port'     => $dbConfigObj->port,
                         );
+                        
+                        if ( $configObj->offsetExists('pdo_options') === TRUE ) {
+                            $descriptor['options'] = $configObj->pdo_options->toArray();
+                        }
                         
                         // DB接続
                         $connectionObj = new \Takajou\Db\Adapter\Pdo\Mysql($descriptor);
