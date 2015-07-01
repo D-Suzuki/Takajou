@@ -11,13 +11,25 @@ class Service {
     public function setDefaultDI(\Phalcon\DiInterface $di, \Phalcon\Config $configObj) {
 
 #######
+# LOG #
+#######
+        if ($configObj->offsetExists('fileLogger')) {
+            $di->set('fileLogger', function () use ($configObj) {
+                $loggerObj = new \Phalcon\Logger\Adapter\File($configObj->fileLogger->filePath . '-' . date('Ymd') . '.log');
+                $loggerObj->setLogLevel($configObj->fileLogger->logLevel);
+
+                return $loggerObj;
+            });
+        }
+        
+#######
 # URL #
 #######
         if ($configObj->offsetExists('url')) {
             $di->set('url', function () use ($configObj) {
                 $urlObj = new UrlResolver();
                 $urlObj->setBaseUri($configObj->services->url->baseUri);
-    
+
                 return $urlObj;
             }, true);
         }
