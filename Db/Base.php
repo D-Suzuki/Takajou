@@ -31,6 +31,12 @@ abstract class Base {
     private $bindParams   = array();
 
 
+    /**
+     * バインドパラメータータイプ
+     * @var array
+     */
+    private $bindTypes    = array();
+
     /* -------------------------------------------------- */
 
 
@@ -104,11 +110,48 @@ abstract class Base {
 
 
     /**
+     * bindTypesへのsetter
+     * @param array $bindTypes
+     */
+    public function setBindTypes($bindTypes) {
+    	$this->bindTypes = $bindTypes;
+    }
+    
+    
+    /**
+     * bindTypesへの追加（値単位）
+     * @param unknown $bindTypes
+     */
+    public function addBindType($bindType) {
+    	array_push($this->bindTypes, $bindType);
+    }
+
+
+    /**
+     * bindTypesへの追加（配列単位）
+     * @param unknown $bindTypes
+     */
+    public function addBindTypes($bindTypes) {
+    	$this->bindTypes = array_merge($this->bindTypes, $bindTypes);
+    }
+    
+    
+    /**
+     * bindTypesへのgetter
+     * @return array
+     */
+    public function getBindTypes() {
+    	return $this->bindTypes;
+    }
+
+
+    /**
      * クエリとパラメーターをリセット
      */
     public function resetQueryAndParams() {
         $this->query      = null;
         $this->bindParams = array();
+        $this->bindTypes  = array();
     }
 
 
@@ -120,7 +163,7 @@ abstract class Base {
      * @return array
      */
     public function select() {
-        $result = $this->dbAccessObj->select($this->connectionId, $this->query, $this->bindParams);
+        $result = $this->dbAccessObj->select($this->connectionId, $this->query, $this->bindParams, $this->bindTypes);
         $this->resetQueryAndParams();
         return $result;
     }
@@ -131,7 +174,7 @@ abstract class Base {
      * @return array
      */
     public function selectRow() {
-        $result = $this->dbAccessObj->selectRow($this->connectionId, $this->query, $this->bindParams);
+        $result = $this->dbAccessObj->selectRow($this->connectionId, $this->query, $this->bindParams, $this->bindTypes);
         $this->resetQueryAndParams();
         return $result;
     }
@@ -142,7 +185,7 @@ abstract class Base {
      * @return PDOStatement
      */
     public function getPdoStatement() {
-        $result = $this->dbAccessObj->getPdoStatement($this->connectionId, $this->query, $this->bindParams);
+        $result = $this->dbAccessObj->getPdoStatement($this->connectionId, $this->query, $this->bindParams, $this->bindTypes);
         $this->resetQueryAndParams();
         return $result;
     }
@@ -153,7 +196,7 @@ abstract class Base {
      * @return
      */
     public function exec() {
-        $result = $this->dbAccessObj->exec($this->connectionId, $this->query, $this->bindParams);
+        $result = $this->dbAccessObj->exec($this->connectionId, $this->query, $this->bindParams, $this->bindTypes);
         $this->resetQueryAndParams();
         return $result;
     }

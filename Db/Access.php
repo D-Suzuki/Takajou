@@ -145,10 +145,14 @@ class Access implements \Takajou\Db\AccessInterface {
      * @param  unknown $bindParams
      * @return array   
      */
-    public function select($connectionId, $query, $bindParams) {
+    public function select($connectionId, $query, $bindParams, $bindTypes = array()) {
 
         $connection = $this->dbManagerObj->getConnection($connectionId);
-        $result = $connection->query($query, $bindParams);
+        if (empty($bindTypes) === TRUE) {
+            $result = $connection->query($query, $bindParams);
+        } else {
+            $result = $connection->query($query, $bindParams, $bindTypes);
+        }
         $result->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
 
         return $result->fetchAll();
@@ -162,10 +166,14 @@ class Access implements \Takajou\Db\AccessInterface {
      * @param  unknown $bindParams
      * @return array
      */
-    public function selectRow($connectionId, $query, $bindParams) {
+    public function selectRow($connectionId, $query, $bindParams, $bindTypes = array()) {
     
         $connection = $this->dbManagerObj->getConnection($connectionId);
-        $result = $connection->query($query, $bindParams);
+        if (empty($bindTypes) === TRUE) {
+            $result = $connection->query($query, $bindParams);
+        } else {
+            $result = $connection->query($query, $bindParams, $bindTypes);
+        }
         $result->setFetchMode(\Phalcon\Db::FETCH_ASSOC);
     
         return $result->fetch();
@@ -179,12 +187,14 @@ class Access implements \Takajou\Db\AccessInterface {
      * @param unknown $bindParams
      * @return PDOStatement
      */
-    public function getPdoStatement($connectionId, $query, $bindParams) {
+    public function getPdoStatement($connectionId, $query, $bindParams, $bindTypes = array()) {
 
         $connection = $this->dbManagerObj->getConnection($connectionId);
         $statement  = $connection->prepare($query);
-        if ($bindParams) {
+        if (empty($bindTypes) === TRUE) {
             $statement = $connection->executePrepared($statement, $bindParams);
+        } else {
+        	$statement = $connection->executePrepared($statement, $bindParams, $bindTypes);
         }
 
         return $statement;
@@ -198,10 +208,14 @@ class Access implements \Takajou\Db\AccessInterface {
      * @param unknown $bindParams
      * @param boolean
      */
-    public function exec($connectionId, $query, $bindParams) {
+    public function exec($connectionId, $query, $bindParams, $bindTypes = array()) {
 
         $connection = $this->dbManagerObj->getConnection($connectionId);
-        return $connection->execute($query, $bindParams);
+        if (empty($bindTypes) === TRUE) {
+            return $connection->execute($query, $bindParams);
+        } else {
+        	return $connection->execute($query, $bindParams, $bindTypes);
+        }
     }
 
 
